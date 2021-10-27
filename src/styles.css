@@ -1,0 +1,44 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+.container {
+    /* background-color: aliceblue; */
+    width: 90%;
+    margin: auto;
+}
+
+.main {
+    /* background-color: beige; */
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+    /* width: 90%; */
+    margin: 10px auto;
+}
+
+.clocks {
+    /* background-color: cadetblue; */
+    padding: 20px;
+    /* border: 1px black; */
+    width: 260px;
+    height: 310px;
+    /* margin: auto; */
+}
+
+.text {
+    margin-left: 20px;
+    font-size: large;
+    font-weight: 600;
+
+}
+
+.digital {
+    margin-left: 20px;
+    font-size: large;
+    font-weight: 500;
+}
+
+.text img {
+    float: right;
+}
