@@ -7,63 +7,76 @@ const locationArray = [
     {city:"newyork", display:"New York", timeZone: "America/New_York"},
 ];
 
-const activeClocks = [];
+const activeClocks = []; // [{city:"singapore", face:"day"}, {city:"tokyo", face:"night"}]
+let intervalId = 0;
+let nightHour = 0;
 
+// Check for form submission 
 const addButton = document.getElementById("add");
 addButton.addEventListener("click", btnClick);
 const delButton = document.getElementById("remove");
 delButton.addEventListener("click", deleteClock);
 
+// Add location clock
+function btnClick(e) {
+  e.preventDefault();
+  const option = document.getElementById("location");
+  const found = activeClocks.some(o => o.city === option.value)
+  // console.log(test);
+  if (found) {
+    window.alert ("Clock already in use!");
+    return;
+  }
+  // DOM to add clock to index.html
+  const addDiv = document.getElementById("main");
+  const displayCity = locationArray.find(o => o.city === option.value);
+  addDiv.innerHTML += 
+    `<div class="clocks" id="${option.value}-clock" ><canvas id="${option.value}" height="260" width="260"></canvas>
+    <div class = "text">${displayCity.display}<img src="./src/delete.png"></div><div class="digital" id="${option.value}2"></div>  </div>`;
+  
+  // Update active clocks array
+  activeClocks.push({city:option.value, face:"day"});
+  console.log(activeClocks);
+  // Add Digital Clock to index.html
+  digitalClock(option.value+2, displayCity.timeZone);
+
+  // Activate Analog Clocks
+  activateClocks();
+}
+
+// Delete location clock
 function deleteClock(e) {
   e.preventDefault();
   const option = document.getElementById("location");
-  if (activeClocks.indexOf(option.value) === -1) {
+  const found = activeClocks.some(o => o.city === option.value);
+  if ( !found ) {
     window.alert ("No such clock!");
     return;
   }
+  // DOM to delete clock from index.html
   let deleteDiv = document.getElementById(`${option.value}-clock`);
   while (deleteDiv.lastElementChild) {
     deleteDiv.removeChild(deleteDiv.lastElementChild);
   }
   document.getElementById(`${option.value}-clock`).remove();
-  let cityIndex = activeClocks.indexOf(option.value);
+
+  // Remove location from active clocks array
+  let cityIndex = activeClocks.findIndex(o => o.city === option.value);
   activeClocks.splice(cityIndex, 1);
-}
-
-function btnClick(e) {
-  e.preventDefault();
-  const option = document.getElementById("location");
-  if (activeClocks.indexOf(option.value) !== -1) {
-    window.alert ("Clock already in use!");
-    return;
-  }
-  const addDiv = document.getElementById("main");
-  const displayCity = locationArray.find(o => o.city === option.value);
-  
-  addDiv.innerHTML += 
-    `<div class="clocks" id="${option.value}-clock" ><canvas id="${option.value}" height="260" width="260"></canvas>
-    <div class = "text">${displayCity.display}<img src="./src/delete.png"></div><div class="digital" id="${option.value}2"></div>  </div>`;
-  
-  activeClocks.push(option.value);
-  digitalClock(option.value+2, displayCity.timeZone);
-  activateClocks();
-  // worldClock(option.value);
-
+  clearInterval(intervalId);
 }
 
 function digitalClock(pId,zone) {
-    //Determine Local Time 
+    //Determine Location Time 
     const weekDay = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const foreignDateObj = new Date().toLocaleString('en-US', { timeZone: zone });
-    // const localTimeZone = dateObj.toLocaleString('en-US', { timeZone: zone });
-    // console.log (localTimeZone);
-    const localTimeObj = new Date(foreignDateObj);
+    const locTimeObj = new Date(foreignDateObj);
 
-    let h = localTimeObj.getHours();
-    let m = localTimeObj.getMinutes();
-    let s = localTimeObj.getSeconds();
+    let h = locTimeObj.getHours();
+    let m = locTimeObj.getMinutes();
+    let s = locTimeObj.getSeconds();
     let session = "AM";
-    let day = weekDay[localTimeObj.getDay()];
+    let day = weekDay[locTimeObj.getDay()];
 
     if(h == 0){
         h = 12;
@@ -78,40 +91,49 @@ function digitalClock(pId,zone) {
     m = (m < 10) ? "0" + m : m;
     s = (s < 10) ? "0" + s : s;
     
-    let localTime = day + " " + h + ":" + m + ":" + s + " " + session;
-    document.getElementById(pId).innerText = localTime;
+    //Add location time to index.html
+    let locationTime = day + " " + h + ":" + m + ":" + s + " " + session;
+    document.getElementById(pId).innerText = locationTime;
     setTimeout(()=>{digitalClock(pId,zone)},1000);
 }
 
 function worldClock(city) {
+  // Draw the Analog clock for each location
   let canvas = document.getElementById(city);
   let ctx = canvas.getContext("2d");
   let radius = canvas.height / 2;
   ctx.translate(radius, radius);
   radius = radius * 0.90
-  setInterval(()=> {
+  intervalId = setInterval(()=> {
     drawClock(ctx, radius, city)
   }, 1000);
 }
 
 function activateClocks() {
-  for (const val of activeClocks) {
-    worldClock(val);
+  for (const val in activeClocks) {
+    worldClock(activeClocks[val].city);
   }
 }
 
 function drawClock(ctx, radius, location) {
-    drawFace(ctx, radius);
-    drawNumbers(ctx, radius);
-    drawTime(ctx, radius, location);
+  drawFace(ctx, radius, location);
+  drawNumbers(ctx, radius);
+  drawTime(ctx, radius, location);
   
 }
 
-function drawFace(ctx, radius) {
+function drawFace(ctx, radius, location) {
+  // Draw the clock face
   let grad;
   ctx.beginPath();
   ctx.arc(0, 0, radius, 0, 2*Math.PI);
   ctx.fillStyle = 'white';
+  const found = activeClocks.some(o => o.city === location)
+  if (found) {
+    let itemIndex = activeClocks.findIndex(o => o.city === location);
+    if (activeClocks[itemIndex].face == "night") ctx.fillStyle = 'grey';
+    else ctx.fillStyle = 'white';
+  }
   ctx.fill();
   grad = ctx.createRadialGradient(0,0,radius*0.95, 0,0,radius*1.05);
   grad.addColorStop(0, '#333');
@@ -127,6 +149,7 @@ function drawFace(ctx, radius) {
 }
 
 function drawNumbers(ctx, radius) {
+  // Draw the numbers
   let ang;
   let num;
   ctx.font = radius*0.15 + "px arial";
@@ -145,6 +168,7 @@ function drawNumbers(ctx, radius) {
 }
 
 function drawTime(ctx, radius, location){
+  // Draw the clock hands
   const displayCity = locationArray.find(o => o.city === location);
   const foreignDateObj = new Date().toLocaleString('en-US', { timeZone: displayCity.timeZone });
   const localTimeObj = new Date(foreignDateObj);
@@ -152,6 +176,17 @@ function drawTime(ctx, radius, location){
   let hour = localTimeObj.getHours();
   let minute = localTimeObj.getMinutes();
   let second = localTimeObj.getSeconds();
+
+  nightHour = localTimeObj.getHours();
+  const found = activeClocks.some(o => o.city === location)
+  if (found) {
+    let itemIndex = activeClocks.findIndex(o => o.city === location);
+    if (nightHour > 7 && nightHour < 19) {
+      activeClocks[itemIndex].face = "day"
+    } else activeClocks[itemIndex].face = "night"
+  }
+ 
+  // console.log(activeClocks);
 
   //hour
   hour=hour%12;

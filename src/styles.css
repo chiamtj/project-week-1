@@ -3,8 +3,9 @@ body {
 }
 
 .container {
-    /* background-color: aliceblue; */
+    background-color: aliceblue;
     width: 90%;
+    padding: 5px 20px;
     margin: auto;
 }
 
@@ -41,4 +42,23 @@ body {
 
 .text img {
     float: right;
+}
+
+@media (max-width: 800px) {
+    .container {
+        background-color: aliceblue;
+        width: 90%;
+        padding: 5px 5px;
+        margin: auto;
+        text-align: center;
+    }
+    
+    .main {
+        /* background-color: beige; */
+        display: flex;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+        /* width: 90%; */
+        margin: 10px auto;
+    }
 }

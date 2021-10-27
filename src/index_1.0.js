@@ -8,8 +8,6 @@ const locationArray = [
 ];
 
 const activeClocks = [];
-let night = false;
-let tempHour = 0;
 
 const addButton = document.getElementById("add");
 addButton.addEventListener("click", btnClick);
@@ -62,7 +60,6 @@ function digitalClock(pId,zone) {
     const localTimeObj = new Date(foreignDateObj);
 
     let h = localTimeObj.getHours();
-    tempHour = localTimeObj.getHours();
     let m = localTimeObj.getMinutes();
     let s = localTimeObj.getSeconds();
     let session = "AM";
@@ -71,9 +68,6 @@ function digitalClock(pId,zone) {
     if(h == 0){
         h = 12;
     }
-
-    if (tempHour > 7 && tempHour < 19) night = false;
-    else night = true;
 
     if(h > 12){
         h = h - 12;
@@ -107,18 +101,17 @@ function activateClocks() {
 }
 
 function drawClock(ctx, radius, location) {
-    drawFace(ctx, radius, night);
+    drawFace(ctx, radius);
     drawNumbers(ctx, radius);
     drawTime(ctx, radius, location);
   
 }
 
-function drawFace(ctx, radius, night) {
+function drawFace(ctx, radius) {
   let grad;
   ctx.beginPath();
   ctx.arc(0, 0, radius, 0, 2*Math.PI);
-  if (night) ctx.fillStyle = 'grey';
-  else ctx.fillStyle = 'white';
+  ctx.fillStyle = 'white';
   ctx.fill();
   grad = ctx.createRadialGradient(0,0,radius*0.95, 0,0,radius*1.05);
   grad.addColorStop(0, '#333');
