@@ -5,7 +5,19 @@ const locationArray = [
     {city:"london", display:"London", timeZone: "Europe/London"},
     {city:"frankfurt", display:"Frankfurt", timeZone: "Europe/Berlin"},
     {city:"newyork", display:"New York", timeZone: "America/New_York"},
+    {city:"sanfrancisco", display:"San Francisco", timeZone: "America/Los_Angeles"},
 ];
+
+// Fill in the location form with values from locationArray
+function fillForm() {
+  const select = document.getElementById("location");
+  for (const val in locationArray) {
+    let element = document.createElement("option");
+      element.value = locationArray[val].city;
+      element.textContent = locationArray[val].display;
+      select.appendChild(element);
+  }
+}
 
 const activeClocks = []; // [{city:"singapore", face:"day"}, {city:"tokyo", face:"night"}]
 let intervalId = 0;
@@ -37,6 +49,7 @@ function btnClick(e) {
   // Update active clocks array
   activeClocks.push({city:option.value, face:"day"});
   console.log(activeClocks);
+
   // Add Digital Clock to index.html
   digitalClock(option.value+2, displayCity.timeZone);
 
