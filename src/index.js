@@ -1,12 +1,4 @@
-const locationArray = [
-    {city:"singapore", display:"Singapore", timeZone: "Asia/Singapore"},
-    {city:"sydney", display:"Sydney", timeZone: "Australia/Sydney"}, 
-    {city:"tokyo", display:"Tokyo", timeZone: "Asia/Tokyo"}, 
-    {city:"london", display:"London", timeZone: "Europe/London"},
-    {city:"frankfurt", display:"Frankfurt", timeZone: "Europe/Berlin"},
-    {city:"newyork", display:"New York", timeZone: "America/New_York"},
-    {city:"sanfrancisco", display:"San Francisco", timeZone: "America/Los_Angeles"},
-];
+window.addEventListener("DOMContentLoaded", fillForm, false);
 
 // Fill in the location form with values from locationArray
 function fillForm() {
@@ -18,6 +10,17 @@ function fillForm() {
       select.appendChild(element);
   }
 }
+
+// List of Cities and their timezones
+const locationArray = [
+  {city:"singapore", display:"Singapore", timeZone: "Asia/Singapore"},
+  {city:"sydney", display:"Sydney", timeZone: "Australia/Sydney"}, 
+  {city:"tokyo", display:"Tokyo", timeZone: "Asia/Tokyo"}, 
+  {city:"london", display:"London", timeZone: "Europe/London"},
+  {city:"frankfurt", display:"Frankfurt", timeZone: "Europe/Berlin"},
+  {city:"newyork", display:"New York", timeZone: "America/New_York"},
+  {city:"sanfrancisco", display:"San Francisco", timeZone: "America/Los_Angeles"},
+];
 
 const activeClocks = []; // [{city:"singapore", face:"day"}, {city:"tokyo", face:"night"}]
 let intervalId = 0;
